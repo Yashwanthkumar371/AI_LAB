@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodPlate - Food Ordering</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+/* HEADER */
+header {
+  background: #0f172a;
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #22c55e;
+}
+
+.header-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.user-info {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.cart-btn, .login-btn, .logout-btn, .orders-btn {
+  background: #22c55e;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.cart-btn:hover, .login-btn:hover, .logout-btn:hover, .orders-btn:hover {
+  background: #16a34a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.cart-count {
+  background: #ef4444;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: -8px;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #0f172a;
+}
+
+/* MENU GRID */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+}
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 48px;
+  overflow: hidden;
+}
+
+.card h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.card p {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.price {
+  color: #22c55e;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.add-btn {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.add-btn:hover {
+  background: #16a34a;
+}
+
+.quantity-selector {
+  display: flex;
+  gap: 5px;
+}
+
+.qty-btn {
+  background: #e2e8f0;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.qty-input {
+  width: 40px;
+  text-align: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+  padding: 5px;
+}
+
+/* SIDEBAR CART */
+.cart-sidebar {
+  position: fixed;
+  right: -400px;
+  top: 0;
+  width: 400px;
+  height: 100vh;
+  background: white;
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+  transition: right 0.3s;
+  z-index: 200;
+}
+
+.cart-sidebar.active {
+  right: 0;
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.close-cart {
+  background: #e2e8f0;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.cart-items {
+  margin-bottom: 20px;
+}
+
+.cart-item {
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-item-info {
+  flex: 1;
+}
+
+.cart-item-name {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.cart-item-price {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.cart-item-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.remove-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.cart-total {
+  background: #0f172a;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.checkout-btn, .continue-btn {
+  width: 100%;
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.checkout-btn:hover, .continue-btn:hover {
+  background: #16a34a;
+}
+
+/* LOGIN MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.95);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  max-width: 450px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  font-size: 24px;
+  color: #0f172a;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #94a3b8;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.submit-btn {
+  width: 100%;
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.submit-btn:hover {
+  background: #16a34a;
+}
+
+.toggle-form {
+  text-align: center;
+  margin-top: 15px;
+  color: #64748b;
+}
+
+.toggle-form a {
+  color: #22c55e;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ORDERS PAGE */
+.orders-container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.order-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.order-status {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-confirmed {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-delivered {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.order-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.detail-item {
+  font-size: 14px;
+}
+
+.detail-label {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* FOOTER */
+footer {
+  background: #0f172a;
+  color: white;
+  padding: 30px;
+  text-align: center;
+  margin-top: 50px;
+}
+
+/* WHATSAPP BUTTON */
+.whatsapp-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: #25D366;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  transition: all 0.3s;
+  z-index: 99;
+  font-size: 28px;
+}
+
+.whatsapp-btn:hover {
+  background: #20ba58;
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+}
+
+.alert {
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  display: none;
+}
+
+.alert.show {
+  display: block;
+}
+
+.alert-success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.alert-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.alert-info {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  
+  .cart-sidebar {
+    width: 100%;
+    right: -100%;
+  }
+  
+  .hero h1 {
+    font-size: 28px;
+  }
+  
+  header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">🍽️ FoodPlate</div>
+  <div class="header-right">
+    <div class="user-info" id="userInfo"></div>
+    <button class="login-btn" id="loginBtn" onclick="showLoginModal()">Login</button>
+    <button class="logout-btn" id="logoutBtn" onclick="logout()" style="display: none;">Logout</button>
+    <button class="orders-btn" id="ordersBtn" onclick="showOrders()" style="display: none;">Orders</button>
+    <button class="cart-btn" onclick="toggleCart()">
+      🛒 Cart
+      <span class="cart-count" id="cartCount" style="display: none;">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO SECTION -->
+<div class="hero">
+  <h1>Welcome to FoodPlate</h1>
+  <p>Order your favorite food online with fast delivery 🚀</p>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="mainContent">
+  <div class="container">
+    <h2 class="section-title">🍜 Popular Foods</h2>
+    <div id="alert"></div>
+    <div class="menu-grid" id="menuGrid"></div>
+  </div>
+</div>
+
+<!-- CART SIDEBAR -->
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h2>🛒 Your Cart</h2>
+    <button class="close-cart" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-total">
+    <div style="margin-bottom: 10px;">Total Amount</div>
+    <div id="cartTotal" style="font-size: 28px; font-weight: bold;">₹0</div>
+  </div>
+  <button class="checkout-btn" id="checkoutBtn" onclick="checkout()" style="display: none;">Proceed to Checkout</button>
+  <button class="continue-btn" id="continueBtn" onclick="toggleCart()" style="display: block;">Continue Shopping</button>
+</div>
+
+<!-- LOGIN/REGISTER MODAL -->
+<div class="modal" id="authModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="authTitle">Login</h2>
+      <button class="close-modal" onclick="closeModal()">✕</button>
+    </div>
+    
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="Enter your email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password">
+      </div>
+      <button class="submit-btn" onclick="handleLogin()">Login</button>
+      <div class="toggle-form">
+        Don't have an account? <a onclick="switchToRegister()">Register here</a>
+      </div>
+    </div>
+    
+    <!-- REGISTER FORM -->
+    <div id="registerForm" style="display: none;">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="registerName" placeholder="Enter your full name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="registerEmail" placeholder="Enter your email">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="registerPhone" placeholder="Enter your phone number">
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <input type="text" id="registerAddress" placeholder="Enter your address">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="registerPassword" placeholder="Enter password">
+      </div>
+      <button class="submit-btn" onclick="handleRegister()">Register</button>
+      <div class="toggle-form">
+        Already have an account? <a onclick="switchToLogin()">Login here</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal" id="checkoutModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Checkout</h2>
+      <button class="close-modal" onclick="closeCheckout()">✕</button>
+    </div>
+    <div id="checkoutAlert"></div>
+    <div class="form-group">
+      <label>Delivery Address</label>
+      <input type="text" id="deliveryAddress" placeholder="Enter your delivery address">
+    </div>
+    <div class="form-group">
+      <label>Total Amount</label>
+      <div id="checkoutTotal" style="font-size: 24px; font-weight: bold; color: #22c55e;">₹0</div>
+    </div>
+    <button class="submit-btn" onclick="placeOrder()">Place Order</button>
+  </div>
+</div>
+
+<!-- ORDERS LIST MODAL -->
+<div class="modal" id="ordersModal">
+  <div class="modal-content" style="max-width: 600px;">
+    <div class="modal-header">
+      <h2>Your Orders</h2>
+      <button class="close-modal" onclick="closeOrders()">✕</button>
+    </div>
+    <div id="ordersList" style="max-height: 500px; overflow-y: auto;"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 FoodPlate. All rights reserved. | Fast Delivery | Quality Food | Best Prices</p>
+</footer>
+
+<!-- WHATSAPP BUTTON -->
+<button class="whatsapp-btn" onclick="shareOnWhatsApp()" title="Share Order on WhatsApp">
+  <span style="font-size: 24px;">💬</span>
+</button>
+
+<script>
+const API_BASE = '/api';
+let currentCart = [];
+let currentUser = null;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  checkSession();
+  loadMenu();
+});
+
+// Check Session
+async function checkSession() {
+  try {
+    const res = await fetch(`${API_BASE}/session`);
+    const data = await res.json();
+    
+    if (data.user_id) {
+      currentUser = data;
+      updateUserUI();
+      loadCart();
+    }
+  } catch (error) {
+    console.error('Session check error:', error);
+  }
+}
+
+// Load Menu
+async function loadMenu() {
+  try {
+    const res = await fetch(`${API_BASE}/menu`);
+    const items = await res.json();
+    
+    const grid = document.getElementById('menuGrid');
+    grid.innerHTML = '';
+    
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const imageHTML = item.image ? `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">` : getEmoji(item.category);
+      card.innerHTML = `
+        <div class="card-image">${imageHTML}</div>
+        <h3>${item.name}</h3>
+        <p>${item.description}</p>
+        <div class="card-footer">
+          <span class="price">₹${item.price.toFixed(2)}</span>
+          <div class="quantity-selector">
+            <button class="qty-btn" onclick="updateQty(this, -1)">−</button>
+            <input type="number" class="qty-input" value="1" min="1" item-id="${item.id}">
+            <button class="qty-btn" onclick="updateQty(this, 1)">+</button>
+          </div>
+        </div>
+        <button class="add-btn" onclick="addToCart(${item.id}, this.parentElement.querySelector('.qty-input').value)">Add to Cart</button>
+      `;
+      grid.appendChild(card);
+    });
+  } catch (error) {
+    showAlert('Error loading menu: ' + error.message, 'error');
+  }
+}
+
+function getEmoji(category) {
+  const emojis = {
+    'Rice': '🍚',
+    'Curry': '🍛',
+    'Appetizer': '🥡',
+    'Pizza': '🍕',
+    'Bread': '🥖',
+    'South Indian': '🥘',
+    'Beverage': '🧃'
+  };
+  return emojis[category] || '🍽️';
+}
+
+function updateQty(btn, delta) {
+  const input = btn.parentElement.querySelector('.qty-input');
+  let val = parseInt(input.value) + delta;
+  if (val < 1) val = 1;
+  input.value = val;
+}
+
+// Add to Cart
+async function addToCart(itemId, quantity) {
+  if (!currentUser) {
+    showAlert('Please login first!', 'info');
+    showLoginModal();
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/cart/add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ item_id: itemId, quantity: parseInt(quantity) })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      showAlert('✓ Item added to cart!', 'success');
+      loadCart();
+    } else {
+      showAlert(data.message, 'error');
+    }
+  } catch (error) {
+    showAlert('Error adding to cart: ' + error.message, 'error');
+  }
+}
+
+// Load Cart
+async function loadCart() {
+  if (!currentUser) return;
+  
+  try {
+    const res = await fetch(`${API_BASE}/cart`);
+    const data = await res.json();
+    
+    if (data.success) {
+      currentCart = data.items;
+      updateCartUI();
+    }
+  } catch (error) {
+    console.error('Cart load error:', error);
+  }
+}
+
+// Update Cart UI
+function updateCartUI() {
+  const cartItems = document.getElementById('cartItems');
+  const cartCount = document.getElementById('cartCount');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const continueBtn = document.getElementById('continueBtn');
+  
+  if (currentCart.length === 0) {
+    cartItems.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 30px;">Your cart is empty</p>';
+    document.getElementById('cartTotal').textContent = '₹0';
+    cartCount.style.display = 'none';
+    checkoutBtn.style.display = 'none';
+    continueBtn.style.display = 'block';
+    return;
+  }
+  
+  cartItems.innerHTML = '';
+  let total = 0;
+  
+  currentCart.forEach(item => {
+    total += item.total;
+    const itemEl = document.createElement('div');
+    itemEl.className = 'cart-item';
+    itemEl.innerHTML = `
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">₹${item.price.toFixed(2)} x ${item.quantity} = ₹${item.total.toFixed(2)}</div>
+      </div>
+      <button class="remove-btn" onclick="removeFromCart(${item.item_id})">Remove</button>
+    `;
+    cartItems.appendChild(itemEl);
+  });
+  
+  document.getElementById('cartTotal').textContent = '₹' + total.toFixed(2);
+  cartCount.textContent = currentCart.length;
+  cartCount.style.display = 'flex';
+  checkoutBtn.style.display = 'block';
+}
+
+// Remove from Cart
+async function removeFromCart(itemId) {
+  try {
+    const res = await fetch(`${API_BASE}/cart/remove`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ item_id: itemId })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      showAlert('✓ Item removed from cart!', 'success');
+      loadCart();
+    }
+  } catch (error) {
+    showAlert('Error: ' + error.message, 'error');
+  }
+}
+
+// Toggle Cart
+function toggleCart() {
+  const sidebar = document.getElementById('cartSidebar');
+  sidebar.classList.toggle('active');
+}
+
+// Show Login Modal
+function showLoginModal() {
+  document.getElementById('authModal').classList.add('active');
+  switchToLogin();
+}
+
+// Close Modal
+function closeModal() {
+  document.getElementById('authModal').classList.remove('active');
+}
+
+// Switch Forms
+function switchToLogin() {
+  document.getElementById('authTitle').textContent = 'Login';
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+}
+
+function switchToRegister() {
+  document.getElementById('authTitle').textContent = 'Register';
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+}
+
+// Handle Login
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  
+  if (!email || !password) {
+    showAlert('Please fill in all fields!', 'error');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      currentUser = { user_id: data.user_id, user_name: data.message };
+      updateUserUI();
+      loadCart();
+      closeModal();
+      showAlert('✓ Login successful!', 'success');
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPassword').value = '';
+    } else {
+      showAlert(data.message, 'error');
+    }
+  } catch (error) {
+    showAlert('Login error: ' + error.message, 'error');
+  }
+}
+
+// Handle Register
+async function handleRegister() {
+  const name = document.getElementById('registerName').value;
+  const email = document.getElementById('registerEmail').value;
+  const phone = document.getElementById('registerPhone').value;
+  const address = document.getElementById('registerAddress').value;
+  const password = document.getElementById('registerPassword').value;
+  
+  if (!name || !email || !phone || !address || !password) {
+    showAlert('Please fill in all fields!', 'error');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, address, password })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      currentUser = { user_id: data.user_id, user_name: name };
+      updateUserUI();
+      loadCart();
+      closeModal();
+      showAlert('✓ Registration successful!', 'success');
+      document.getElementById('registerName').value = '';
+      document.getElementById('registerEmail').value = '';
+      document.getElementById('registerPhone').value = '';
+      document.getElementById('registerAddress').value = '';
+      document.getElementById('registerPassword').value = '';
+    } else {
+      showAlert(data.message, 'error');
+    }
+  } catch (error) {
+    showAlert('Registration error: ' + error.message, 'error');
+  }
+}
+
+// Update User UI
+function updateUserUI() {
+  const userInfo = document.getElementById('userInfo');
+  const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const ordersBtn = document.getElementById('ordersBtn');
+  
+  if (currentUser) {
+    userInfo.textContent = `👋 Hello, ${currentUser.user_name || 'User'}!`;
+    loginBtn.style.display = 'none';
+    logoutBtn.style.display = 'block';
+    ordersBtn.style.display = 'block';
+  } else {
+    userInfo.textContent = '';
+    loginBtn.style.display = 'block';
+    logoutBtn.style.display = 'none';
+    ordersBtn.style.display = 'none';
+  }
+}
+
+// Checkout
+function checkout() {
+  if (currentCart.length === 0) {
+    showAlert('Cart is empty!', 'error');
+    return;
+  }
+  
+  const total = currentCart.reduce((sum, item) => sum + item.total, 0);
+  document.getElementById('checkoutTotal').textContent = '₹' + total.toFixed(2);
+  document.getElementById('checkoutModal').classList.add('active');
+  toggleCart();
+}
+
+// Close Checkout
+function closeCheckout() {
+  document.getElementById('checkoutModal').classList.remove('active');
+}
+
+// Place Order
+async function placeOrder() {
+  const address = document.getElementById('deliveryAddress').value;
+  
+  if (!address) {
+    showAlert('Please enter delivery address!', 'error');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/order/place`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ delivery_address: address })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      showAlert('✓ Order placed successfully! Order ID: ' + data.order_id, 'success');
+      currentCart = [];
+      updateCartUI();
+      closeCheckout();
+      document.getElementById('deliveryAddress').value = '';
+      loadCart();
+    } else {
+      showAlert(data.message, 'error');
+    }
+  } catch (error) {
+    showAlert('Order error: ' + error.message, 'error');
+  }
+}
+
+// Show Orders
+async function showOrders() {
+  if (!currentUser) {
+    showAlert('Please login first!', 'info');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/orders`);
+    const data = await res.json();
+    
+    const ordersList = document.getElementById('ordersList');
+    if (data.success && data.orders.length > 0) {
+      ordersList.innerHTML = data.orders.map(order => `
+        <div class="order-card">
+          <div class="order-header">
+            <div class="order-id">Order #${order.order_id}</div>
+            <span class="order-status status-${order.status.toLowerCase()}">
+              ${order.status}
+            </span>
+          </div>
+          <div class="order-details">
+            <div class="detail-item">
+              <div class="detail-label">Amount</div>
+              <div style="font-weight: 600;">₹${order.total_amount.toFixed(2)}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Date</div>
+              <div>${new Date(order.date).toLocaleDateString()}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Address</div>
+              <div>${order.address}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      ordersList.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 30px;">No orders yet</p>';
+    }
+    
+    document.getElementById('ordersModal').classList.add('active');
+  } catch (error) {
+    showAlert('Error loading orders: ' + error.message, 'error');
+  }
+}
+
+// Close Orders
+function closeOrders() {
+  document.getElementById('ordersModal').classList.remove('active');
+}
+
+// Logout
+async function logout() {
+  try {
+    await fetch(`${API_BASE}/logout`, { method: 'POST' });
+    currentUser = null;
+    currentCart = [];
+    updateUserUI();
+    updateCartUI();
+    showAlert('✓ Logged out successfully!', 'success');
+  } catch (error) {
+    showAlert('Logout error: ' + error.message, 'error');
+  }
+}
+
+// Share on WhatsApp
+function shareOnWhatsApp() {
+  if (!currentUser) {
+    showAlert('Please login first to share your order!', 'info');
+    return;
+  }
+
+  let orderMessage = '🍽️ *FoodPlate Order Receipt*\n\n';
+  orderMessage += `👤 *Customer:* ${currentUser.user_name || 'User'}\n`;
+  orderMessage += `📅 *Date:* ${new Date().toLocaleString()}\n\n`;
+  
+  if (currentCart.length > 0) {
+    orderMessage += '*Order Items:*\n';
+    let total = 0;
+    currentCart.forEach((item, index) => {
+      orderMessage += `${index + 1}. ${item.name}\n   Qty: ${item.quantity} × ₹${item.price.toFixed(2)} = ₹${item.total.toFixed(2)}\n`;
+      total += item.total;
+    });
+    orderMessage += `\n*Total Amount:* ₹${total.toFixed(2)}\n`;
+  } else {
+    orderMessage += '*No items in cart*\n';
+  }
+  
+  orderMessage += '\n✅ Thank you for ordering with FoodPlate!\n';
+  orderMessage += '🚚 We will deliver soon!\n';
+  orderMessage += '📞 For queries, call us!\n';
+  
+  // WhatsApp Web URL (without phone number, user can select contact)
+  const encodedMessage = encodeURIComponent(orderMessage);
+  const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
+  
+  // Open WhatsApp
+  window.open(whatsappURL, '_blank');
+}
+
+// Show Alert
+function showAlert(message, type = 'info') {
+  const alertEl = document.getElementById('alert');
+  alertEl.innerHTML = `<div class="alert alert-${type} show">${message}</div>`;
+  setTimeout(() => {
+    alertEl.innerHTML = '';
+  }, 4000);
+}
+</script>
+
+</body>
+</html>
